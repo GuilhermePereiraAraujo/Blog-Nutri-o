@@ -41,8 +41,8 @@ export default function Post(){
                             <div className="categoria-wrapper">
                                 <span className="categoria">{post.categoria}</span>
                             </div>
-                            <div>
-                                <Link to={`/`}>Voltar</Link>
+                            <div className="botao-wrapper">
+                                <button className="botao-detalhes"><a href={`http://localhost:3000/`}>Voltar</a></button>
                             </div>
                         </div>
                         )})}

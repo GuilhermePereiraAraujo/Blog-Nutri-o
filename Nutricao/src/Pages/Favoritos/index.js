@@ -1,45 +1,38 @@
 import { useEffect, useState} from "react";
 import api from "../../services/api";
 import { useHistory } from 'react-router-dom';
-import "./home.scss";
+import "./favoritos.scss";
 import { toast } from "react-toastify";
 
 export default function Home(){
     const [posts, setPosts] = useState([]);
-    const history = useHistory();
 
-    useEffect(() =>{
-        async function loadPosts(){
-            const response = await api.get("rn-api/?api=posts");
-            setPosts(response.data);
-        }
-        loadPosts();
-    }, []);
-
-    function favoritar(id){
+    useEffect(() => {
         const favPosts = localStorage.getItem("posts");
-        let postsSalvos = JSON.parse(favPosts) || [];
-        const findPost = posts.find((post) => post.id === id);
-        const hasPosts = postsSalvos.some((post) => post.id === id);
+        setPosts(JSON.parse(favPosts) || []);
+      }, []);
 
-        if(hasPosts){
-             toast.info("Esse post já foi favoritado");
-             return;
-        }
-
-        postsSalvos.push(findPost);
-        localStorage.setItem("posts", JSON.stringify(postsSalvos));
-        toast.success("Post salvo com sucesso");
-    }
+      function desfavoritar(id) {
+        let filtraPosts = posts.filter((post) => {
+          return post.id !== id;
+        });
+        setPosts(filtraPosts);
+        localStorage.setItem("posts", JSON.stringify(filtraPosts));
+        toast.success("Post excluido com sucesso");
+      }
 
     return(
         <div className="container">
             <div className="listaPosts">
             <div className="pseudo-cabecalho">
                 <h1>Nutri Blue</h1>
-                <button className="botao-favoritos"><a href={`http://localhost:3000/favoritos`}>Favoritos</a></button> 
+                <h2>Meus Posts</h2>
+                <button className="botao-home"><a href={`http://localhost:3000/`}>Home</a></button> 
             </div>
             
+            {posts.length === 0 && (
+                <span>Você não favoritou nenhum post </span>
+            )}
                 {posts.map((post) =>{
                     return(
                         <div className="post" key={post.id}>
@@ -60,7 +53,7 @@ export default function Home(){
                                     <div className="botao-wrapper">
                                         <button className="botao-detalhes"><a href={`http://localhost:3000/post/${post.id}`}>Detalhes</a></button>
                                     </div>
-                                    <div className="botao-wrapper"><button className="botao-favorito" onClick={()=>favoritar(post.id)}>Favoritar</button></div>
+                                    <div className="botao-wrapper"><button className="botao-desfavorita" onClick={()=>desfavoritar(post.id)}>Deletar</button></div>
                                 </div>
                             </div>
                         </div>
